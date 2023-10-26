@@ -50,7 +50,6 @@ class ColorScheme
     @col = colors
     @_scheme = 'mono'
     @_distance = 0.5
-    @_web_safe = false
     @_add_complement = false
 
 
@@ -127,7 +126,7 @@ class ColorScheme
 
     for i in [0 .. used_colors - 1]
       for j in [0..3]
-        output[i * 4 + j] = @col[i].get_hex(@_web_safe, j)
+        output[i * 4 + j] = @col[i].get_hex(j)
 
     return output
 
@@ -382,22 +381,6 @@ class ColorScheme
 
   ###
 
-  web_safe( BOOL )
-
-  Sets whether the colors returned by L<"colors()"> or L<"colorset()"> will be
-  web-safe.
-
-  The default is false.
-
-  ###
-
-  web_safe: (b) ->
-    throw "web_safe needs an argument" if !b?
-    @_web_safe = b
-    return this
-
-  ###
-
   distance( FLOAT )
 
   'FLOAT'> must be a value from 0 to 1. You might use this with the "triade"
@@ -562,7 +545,7 @@ class ColorScheme
       # console.log "set_variant_preset(#{p})"
       @set_variant( i, p[ 2 * i ], p[ 2 * i + 1 ] ) for i in [0 .. 3]
 
-    get_hex: (web_safe, variation) ->
+    get_hex: (variation) ->
       max = Math.max ( this["base_#{color}"] for color in ['red', 'green', 'blue'] )...
       min = Math.min ( this["base_#{color}"] for color in ['red', 'green', 'blue'] )...
 
@@ -576,9 +559,6 @@ class ColorScheme
         rgbVal = Math.min [ 255, Math.round(v - ( v - this["base_#{color}"] * k ) * s) ]...
         rgb.push rgbVal
 
-      if web_safe
-        rgb = ( Math.round(c / 51) * 51 for c in rgb )
-
       formatted = ""
       for i in rgb
         str = i.toString(16)
@@ -586,7 +566,6 @@ class ColorScheme
           str = "0"+str
 
         formatted += str
-
 
       return formatted
 
